@@ -1,3 +1,6 @@
 from django.test import TestCase
+from .models import InputImage
 
-# Create your tests here.
+class TestModel(TestCase):
+    def setUp(self):
+        InputImage.objects.create()

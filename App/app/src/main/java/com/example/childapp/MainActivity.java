@@ -5,12 +5,16 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -26,16 +30,19 @@ import com.example.childapp.model.VolleySingleton;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity{
-    private static final int PERMISSION_CODE = 1234;
+    private static final int CAM_CODE = 1234,STORAGE_CODE = 1000;
+
     private ImageButton temp;
     private Uri image_uri;
-    private final String TAG = "111111111111111";
-    ImageButton dadImg;
-    ImageButton momImg;
+    ImageButton inputImg;
+    ImageView outputImg;
     Button submit;
     private ProgressBar prg;
     @Override
@@ -43,31 +50,23 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prg = findViewById(R.id.progressbar);
-        dadImg = findViewById(R.id.dadImg);
-        momImg = findViewById(R.id.momImg);
+        inputImg = findViewById(R.id.dadImg);
+        outputImg = findViewById(R.id.momImg);
         submit = findViewById(R.id.submit);
-        dadImg.setOnClickListener(this::onImageClick);
-        momImg.setOnClickListener(this::onImageClick);
+        inputImg.setOnClickListener(this::onImageClick);
         submit.setOnClickListener(this::postData);
     }
     public void postData(View v){
-        if (dadImg.getDrawable() != null && momImg.getDrawable() != null){
+        if (inputImg.getDrawable() != null){
             prg.setVisibility(View.VISIBLE);
             String url = "http://10.0.2.2:8000/api/";
             VolleyMultipartRequest multipartRequest= new VolleyMultipartRequest(Request.Method.POST, url,
                     response -> Toast.makeText(getBaseContext(), "Upload successfully!", Toast.LENGTH_SHORT).show(),
-                    error -> Toast.makeText(getBaseContext(), "Upload failed!", Toast.LENGTH_SHORT).show()){
-                @Override
-                protected Map<String, String> getParams(){
-                    Map<String,String> params = new HashMap<>();
-                    params.put("tittle", "upload Image");
-                    return params;
-                }
+                    error -> Toast.makeText(getBaseContext(), "Upload failed!"+error, Toast.LENGTH_SHORT).show()){
                 @Override
                 protected Map<String, DataPart> getByteData() {
                     Map<String, DataPart> params = new HashMap<>();
-                    params.put("dadImg", new DataPart("dadImg.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), dadImg.getDrawable()), "image/jpeg"));
-                    params.put("momImg", new DataPart("momImg.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), momImg.getDrawable()), "image/jpeg"));
+                    params.put("Img", new DataPart("Img.jpg", AppHelper.getFileDataFromDrawable(getBaseContext(), inputImg.getDrawable()), "image/jpeg"));
                     return params;
                 }
             };
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity{
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED||
                 checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_DENIED) {
             String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            requestPermissions(permissions, PERMISSION_CODE);
+            requestPermissions(permissions, CAM_CODE);
         }else {
             openCamera();
         }
@@ -107,12 +106,16 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
          super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-         if (requestCode == PERMISSION_CODE) {
+         if (requestCode == CAM_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
-        }
+        } else if (requestCode == STORAGE_CODE) {
+             if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+             }
+         }
     }
+
 }

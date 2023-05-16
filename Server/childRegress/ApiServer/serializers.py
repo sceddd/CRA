@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from .models import Object
+from .models import InputImage
 
 
 class ObjectSerializer(serializers.ModelSerializer):
-
     class Meta:
-        model = Object
+        model = InputImage
         fields = '__all__'

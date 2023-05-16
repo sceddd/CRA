@@ -41,11 +41,12 @@
 		app:layout_constraintTop_toBottomOf="@id/progressbar"
 		tools:srcCompat="@tools:sample/avatars" />
 
-	<ImageButton
+	<ImageView
 		android:id="@+id/momImg"
 		android:layout_width="417dp"
 		android:layout_height="284dp"
 		android:layout_marginTop="12dp"
+		android:clickable="false"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"

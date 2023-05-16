@@ -3,12 +3,12 @@ from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
-from .models import Object
+from .models import InputImage
 from .serializers import ObjectSerializer
 
 
 class ObjectViewSet(viewsets.ModelViewSet):
-    queryset = Object.objects.all()
+    queryset = InputImage.objects.all()
     serializer_class = ObjectSerializer
     parser_classes = (MultiPartParser, FormParser)
 
